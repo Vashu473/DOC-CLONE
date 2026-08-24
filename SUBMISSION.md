@@ -13,16 +13,15 @@
 
 ## Live product URL
 
-**Preferred (reviewers):** Vercel + Neon — this machine was not logged into Vercel/Neon, so run the deploy steps in README once, then paste the `*.vercel.app` URL here.
-
-**Session tunnel (only while this PC is on):** https://page-range-considered-rainbow.trycloudflare.com
-
-Do not submit the tunnel URL as the assignment live link unless you keep the machine and `npm run dev` running. Use Vercel for the Drive/portal submission.
+- App: https://doc-clone-eta.vercel.app
+- Login: https://doc-clone-eta.vercel.app/login
+- Source: https://github.com/Vashu473/DOC-CLONE
 
 ## Reviewer credentials
 
 - `alice@ajaia.dev` / `demo1234` — owner
 - `bob@ajaia.dev` / `demo1234` — shared-with
+- `carol@ajaia.dev` / `demo1234` — unrelated (should not see Alice’s unshared docs)
 
 Seeded document: **Welcome to Ajaia Docs** (Alice owns, already shared with Bob).
 
@@ -40,9 +39,9 @@ See [`README.md`](README.md): Docker Postgres on port 5433, `npm run db:setup`, 
 
 ## What is incomplete
 
-- Live URL must be filled after Vercel + Neon env + seed
 - Walkthrough video URL must be pasted into `WALKTHROUGH.txt` and the assignment portal
-- Google Drive zip/folder is a manual upload
+- Google Drive folder is a manual upload
+- If Sign in fails on Vercel, production DB is not seeded yet — run `prisma db push` + `prisma db seed` against the Neon `DATABASE_URL`
 
 ## What I would build next (2–4 hours)
 

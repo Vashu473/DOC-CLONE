@@ -10,6 +10,13 @@ import {
   fileToTiptapDoc,
 } from "@/lib/import-file";
 import { canAccessDocument, canManageSharing } from "@/lib/permissions";
+import {
+  DEFAULT_TITLE,
+  emptyUploadMessage,
+  isValidTiptapDoc,
+  normalizeDocumentTitle,
+  resolveShareTargetError,
+} from "@/lib/document-rules";
 
 async function loadAccessibleDoc(userId: string, documentId: string) {
   const doc = await prisma.document.findUnique({
@@ -33,7 +40,7 @@ export async function createDocument() {
   const user = await requireUser();
   const doc = await prisma.document.create({
     data: {
-      title: "Untitled document",
+      title: DEFAULT_TITLE,
       content: emptyDoc as Prisma.InputJsonValue,
       ownerId: user.id,
     },
@@ -46,7 +53,7 @@ export async function renameDocument(documentId: string, title: string) {
   const user = await requireUser();
   const doc = await loadAccessibleDoc(user.id, documentId);
   if (!doc) return { error: "Document not found or you do not have access." };
-  const next = title.trim().slice(0, 200) || "Untitled document";
+  const next = normalizeDocumentTitle(title);
   await prisma.document.update({
     where: { id: documentId },
     data: { title: next },
@@ -63,11 +70,7 @@ export async function saveDocumentContent(
   const user = await requireUser();
   const doc = await loadAccessibleDoc(user.id, documentId);
   if (!doc) return { error: "Document not found or you do not have access." };
-  if (
-    !content ||
-    typeof content !== "object" ||
-    (content as { type?: string }).type !== "doc"
-  ) {
+  if (!isValidTiptapDoc(content)) {
     return { error: "Invalid document content." };
   }
   await prisma.document.update({
@@ -86,17 +89,16 @@ export async function shareDocument(documentId: string, email: string) {
     return { error: "Only the owner can share this document." };
   }
   const normalized = email.trim().toLowerCase();
-  if (!normalized) return { error: "Enter an email address." };
-  const target = await prisma.user.findUnique({ where: { email: normalized } });
-  if (!target) {
-    return {
-      error:
-        "User not found. Use a seeded account such as bob@ajaia.dev or alice@ajaia.dev.",
-    };
-  }
-  if (target.id === doc.ownerId) {
-    return { error: "The owner already has full access." };
-  }
+  const target = normalized
+    ? await prisma.user.findUnique({ where: { email: normalized } })
+    : null;
+  const shareError = resolveShareTargetError({
+    email,
+    ownerId: doc.ownerId,
+    target,
+  });
+  if (shareError) return { error: shareError };
+  if (!target) return { error: "User not found." };
   await prisma.documentShare.upsert({
     where: {
       documentId_userId: { documentId, userId: target.id },
@@ -127,9 +129,11 @@ export async function unshareDocument(documentId: string, userId: string) {
 export async function importDocument(formData: FormData) {
   const user = await requireUser();
   const file = formData.get("file");
-  if (!(file instanceof File) || file.size === 0) {
+  if (!(file instanceof File)) {
     return { error: "Choose a .txt or .md file to import." };
   }
+  const emptyMsg = emptyUploadMessage(file.size);
+  if (emptyMsg) return { error: emptyMsg };
   try {
     assertImportFile(file.name, file.size);
   } catch (err) {

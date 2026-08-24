@@ -27,6 +27,7 @@ export default async function LoginPage() {
           <ul className="mt-2 space-y-1 font-mono text-xs">
             <li>alice@ajaia.dev / demo1234 - owner</li>
             <li>bob@ajaia.dev / demo1234 - shared-with</li>
+            <li>carol@ajaia.dev / demo1234 - no access (authz)</li>
           </ul>
         </div>
         <div className="mt-6">

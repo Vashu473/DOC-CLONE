@@ -26,6 +26,16 @@ async function main() {
     },
   });
 
+  await prisma.user.upsert({
+    where: { email: "carol@ajaia.dev" },
+    update: { name: "Carol Ng", passwordHash },
+    create: {
+      email: "carol@ajaia.dev",
+      name: "Carol Ng",
+      passwordHash,
+    },
+  });
+
   const existing = await prisma.document.findFirst({
     where: { ownerId: alice.id, title: "Welcome to Ajaia Docs" },
   });
@@ -80,7 +90,7 @@ async function main() {
     });
   }
 
-  console.log("Seeded Alice, Bob, and a shared welcome document.");
+  console.log("Seeded Alice, Bob, Carol, and a shared welcome document.");
 }
 
 main()

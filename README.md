@@ -8,25 +8,21 @@ Lightweight collaborative documents for the Ajaia LLC AI-Native Full Stack take-
 |---|---|---|
 | `alice@ajaia.dev` | `demo1234` | Owner |
 | `bob@ajaia.dev` | `demo1234` | Shared-with |
+| `carol@ajaia.dev` | `demo1234` | Unrelated (no share) |
 
 A seeded doc **Welcome to Ajaia Docs** is owned by Alice and already shared with Bob.
 
 ## Live product
 
-See [`SUBMISSION.md`](SUBMISSION.md).
+- https://doc-clone-eta.vercel.app
+- Source: https://github.com/Vashu473/DOC-CLONE
 
-Production path: **Vercel + Neon** (free). This workspace was not logged into Vercel, so you still need:
+If login fails on Vercel, seed Neon once (same `DATABASE_URL` as the Vercel env):
 
 ```bash
-npx vercel login
-npx vercel
-# In the dashboard: set DATABASE_URL (Neon) and SESSION_SECRET
-npx vercel --prod
 DATABASE_URL="postgresql://..." npx prisma db push
 DATABASE_URL="postgresql://..." npx prisma db seed
 ```
-
-Then paste the `*.vercel.app` URL into `SUBMISSION.md` and the assignment portal.
 
 ## What works
 
@@ -64,9 +60,21 @@ Open http://localhost:3000
 
 ```bash
 npm test
+npm run test:e2e
 ```
 
-Covers share access rules and markdown → TipTap import.
+- `npm test` — Vitest (access, import, validation; local DB persistence if Postgres is local)
+- `npm run test:e2e` — short Playwright smoke (login, create, 404)
+
+Needs seeded users (`npm run db:seed`) and a running DB. E2E starts `npm run dev` if nothing is on port 3000.
+
+To hit production instead:
+
+```bash
+npx playwright test --config=playwright.config.ts
+# or
+$env:PLAYWRIGHT_BASE_URL="https://doc-clone-eta.vercel.app"; npm run test:e2e
+```
 
 ## Deploy (Vercel + Neon)
 
