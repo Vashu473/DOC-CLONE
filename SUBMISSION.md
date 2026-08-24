@@ -41,7 +41,7 @@ See [`README.md`](README.md): Docker Postgres on port 5433, `npm run db:setup`, 
 
 - Walkthrough video URL must be pasted into `WALKTHROUGH.txt` and the assignment portal
 - Google Drive folder is a manual upload
-- If Sign in fails on Vercel, production DB is not seeded yet — run `prisma db push` + `prisma db seed` against the Neon `DATABASE_URL`
+- Live app URL is ready: https://doc-clone-eta.vercel.app
 
 ## What I would build next (2–4 hours)
 

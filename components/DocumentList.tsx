@@ -28,23 +28,23 @@ export function DocumentList({
 
   if (!docs.length) {
     return (
-      <p className="rounded-xl border border-dashed border-stone-300 bg-white px-4 py-10 text-center text-sm text-stone-500">
+      <p className="rounded-2xl border border-dashed border-stone-300 bg-white/70 px-4 py-12 text-center text-sm text-stone-500">
         {emptyLabel}
       </p>
     );
   }
 
   return (
-    <ul className="divide-y divide-stone-200 overflow-hidden rounded-xl border border-stone-200 bg-white">
+    <ul className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
       {docs.map((doc) => (
         <li
           key={doc.id}
-          className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 hover:bg-stone-50"
+          className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 px-4 py-3.5 last:border-b-0 transition hover:bg-stone-50/80"
         >
           <div className="min-w-0 flex-1">
             {renamingId === doc.id ? (
               <form
-                className="flex gap-2"
+                className="flex flex-wrap gap-2"
                 onSubmit={async (e) => {
                   e.preventDefault();
                   await renameDocument(doc.id, title);
@@ -56,17 +56,17 @@ export function DocumentList({
                   autoFocus
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full max-w-md rounded-md border border-stone-300 px-2 py-1 text-sm"
+                  className="w-full max-w-md rounded-lg border border-stone-300 px-2.5 py-1.5 text-sm outline-none focus:border-emerald-800 focus:ring-2 focus:ring-emerald-800/15"
                 />
                 <button
                   type="submit"
-                  className="text-sm font-medium text-emerald-900"
+                  className="rounded-lg bg-emerald-900 px-2.5 py-1.5 text-sm font-medium text-white"
                 >
                   Save
                 </button>
                 <button
                   type="button"
-                  className="text-sm text-stone-500"
+                  className="rounded-lg px-2.5 py-1.5 text-sm text-stone-500 hover:bg-stone-100"
                   onClick={() => setRenamingId(null)}
                 >
                   Cancel
@@ -76,21 +76,21 @@ export function DocumentList({
               <>
                 <Link
                   href={`/docs/${doc.id}`}
-                  className="block truncate font-medium text-stone-900 hover:underline"
+                  className="block truncate font-medium text-stone-900 hover:text-emerald-900"
                 >
                   {doc.title}
                 </Link>
-                <p className="text-xs text-stone-500">
+                <p className="mt-0.5 text-xs text-stone-500">
                   Owner {doc.ownerName} ·{" "}
                   {new Date(doc.updatedAt).toLocaleString()}
                 </p>
               </>
             )}
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-1">
             <button
               type="button"
-              className="text-sm text-stone-600 hover:text-stone-900"
+              className="rounded-lg px-2.5 py-1.5 text-sm text-stone-600 hover:bg-stone-100 hover:text-stone-900"
               onClick={() => {
                 setRenamingId(doc.id);
                 setTitle(doc.title);
@@ -101,7 +101,7 @@ export function DocumentList({
             {canDelete ? (
               <button
                 type="button"
-                className="text-sm text-red-700 hover:text-red-900"
+                className="rounded-lg px-2.5 py-1.5 text-sm text-red-700 hover:bg-red-50"
                 onClick={async () => {
                   if (!confirm("Delete this document?")) return;
                   await deleteDocument(doc.id);

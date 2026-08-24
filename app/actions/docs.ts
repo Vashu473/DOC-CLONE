@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
-import { requireUser } from "@/lib/auth";
+import { requireUser, getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
   assertImportFile,
@@ -67,18 +67,28 @@ export async function saveDocumentContent(
   documentId: string,
   content: unknown,
 ) {
-  const user = await requireUser();
-  const doc = await loadAccessibleDoc(user.id, documentId);
-  if (!doc) return { error: "Document not found or you do not have access." };
-  if (!isValidTiptapDoc(content)) {
-    return { error: "Invalid document content." };
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { error: "Your session expired. Please sign in again." };
+    }
+    const doc = await loadAccessibleDoc(user.id, documentId);
+    if (!doc) return { error: "Document not found or you do not have access." };
+    if (!isValidTiptapDoc(content)) {
+      return { error: "Invalid document content." };
+    }
+    // Strip non-JSON values so Prisma never rejects TipTap attrs
+    const json = JSON.parse(JSON.stringify(content)) as Prisma.InputJsonValue;
+    await prisma.document.update({
+      where: { id: documentId },
+      data: { content: json },
+    });
+    // Skip revalidatePath here — autosave fires often and was causing 500s on Vercel
+    return { ok: true as const, updatedAt: new Date().toISOString() };
+  } catch (err) {
+    console.error("saveDocumentContent failed", err);
+    return { error: "Could not save. Please try again in a moment." };
   }
-  await prisma.document.update({
-    where: { id: documentId },
-    data: { content: content as Prisma.InputJsonValue },
-  });
-  revalidatePath(`/docs/${documentId}`);
-  return { ok: true as const, updatedAt: new Date().toISOString() };
 }
 
 export async function shareDocument(documentId: string, email: string) {

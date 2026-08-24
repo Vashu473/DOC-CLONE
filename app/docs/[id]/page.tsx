@@ -37,16 +37,16 @@ export default async function DocumentPage({
     <main className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6">
       <Link
         href="/docs"
-        className="text-sm font-medium text-emerald-900 hover:underline"
+        className="inline-flex items-center gap-1 text-sm font-medium text-emerald-900 transition hover:underline"
       >
         ← All documents
       </Link>
-      <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
+      <div className="mt-5 flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-stone-200/80 bg-white/70 p-4 shadow-sm backdrop-blur">
         <div className="min-w-0 flex-1">
           <TitleEditor documentId={doc.id} initialTitle={doc.title} />
-          <p className="mt-1 text-sm text-stone-500">
+          <p className="mt-1.5 text-sm text-stone-500">
             Owner {doc.owner.name} ({doc.owner.email})
-            {isOwner ? " · you own this" : " · shared with you"}
+            {isOwner ? " · you own this" : " · shared with you as editor"}
           </p>
         </div>
         <ShareDialog
@@ -59,7 +59,7 @@ export default async function DocumentPage({
           }))}
         />
       </div>
-      <div className="mt-6">
+      <div className="mt-5">
         <DocumentEditor
           documentId={doc.id}
           initialTitle={doc.title}

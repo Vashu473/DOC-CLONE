@@ -35,17 +35,17 @@ export function DocsToolbar() {
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={onNew}
           disabled={pending}
-          className="rounded-lg bg-emerald-900 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800 disabled:opacity-60"
+          className="rounded-xl bg-emerald-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 disabled:opacity-60"
         >
-          New document
+          {pending ? "Working…" : "New document"}
         </button>
-        <label className="cursor-pointer rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 hover:bg-stone-50">
+        <label className="cursor-pointer rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm font-medium text-stone-800 transition hover:bg-stone-50">
           Import .txt / .md
           <input
             type="file"
@@ -57,16 +57,15 @@ export function DocsToolbar() {
             }}
           />
         </label>
-        {pending ? (
-          <span className="text-sm text-stone-500">Working…</span>
-        ) : null}
       </div>
-      <p className="text-xs text-stone-500">
-        Supported import: <strong>.txt</strong> and <strong>.md</strong> (max 1
-        MB). Word <strong>.docx</strong> is not supported in this slice.
+      <p className="text-xs leading-5 text-stone-500">
+        Supported import: <strong className="font-medium text-stone-700">.txt</strong>{" "}
+        and <strong className="font-medium text-stone-700">.md</strong> (max 1 MB).
+        Word <strong className="font-medium text-stone-700">.docx</strong> is not
+        supported in this slice.
       </p>
       {error ? (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+        <p className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
           {error}
         </p>
       ) : null}

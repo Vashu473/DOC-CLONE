@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { loginAction, type AuthState } from "@/app/actions/auth";
 import { SubmitButton } from "./SubmitButton";
 
@@ -8,6 +8,7 @@ const initial: AuthState = {};
 
 export function LoginForm() {
   const [state, action] = useActionState(loginAction, initial);
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <form action={action} className="flex flex-col gap-4">
@@ -19,26 +20,71 @@ export function LoginForm() {
           autoComplete="username"
           required
           defaultValue="alice@ajaia.dev"
-          className="rounded-lg border border-stone-300 bg-white px-3 py-2 text-base font-normal text-stone-900 outline-none ring-emerald-800/20 focus:border-emerald-800 focus:ring-2"
+          className="rounded-xl border border-stone-300 bg-white px-3.5 py-2.5 text-base font-normal text-stone-900 outline-none transition ring-emerald-800/15 focus:border-emerald-800 focus:ring-4"
         />
       </label>
       <label className="flex flex-col gap-1.5 text-sm font-medium text-stone-700">
         Password
-        <input
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          defaultValue="demo1234"
-          className="rounded-lg border border-stone-300 bg-white px-3 py-2 text-base font-normal text-stone-900 outline-none ring-emerald-800/20 focus:border-emerald-800 focus:ring-2"
-        />
+        <div className="relative">
+          <input
+            name="password"
+            type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            required
+            defaultValue="demo1234"
+            className="w-full rounded-xl border border-stone-300 bg-white px-3.5 py-2.5 pr-12 text-base font-normal text-stone-900 outline-none transition ring-emerald-800/15 focus:border-emerald-800 focus:ring-4"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className="absolute inset-y-0 right-0 flex items-center px-3 text-stone-500 hover:text-stone-800"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                className="h-5 w-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228L3 3m0 0l18 18"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                className="h-5 w-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+            )}
+          </button>
+        </div>
       </label>
       {state.error ? (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+        <p className="rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-800">
           {state.error}
         </p>
       ) : null}
-      <SubmitButton className="mt-1 rounded-lg bg-emerald-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800 disabled:opacity-60">
+      <SubmitButton className="mt-1 rounded-xl bg-emerald-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 disabled:opacity-60">
         Sign in
       </SubmitButton>
     </form>
