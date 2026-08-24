@@ -1,8 +1,10 @@
 import { afterAll, describe, expect, it } from "vitest";
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { emptyDoc } from "../lib/import-file";
 import { canAccessDocument } from "../lib/permissions";
 import { DEFAULT_TITLE } from "../lib/document-rules";
+
+const emptyContent = emptyDoc as Prisma.InputJsonValue;
 
 import { existsSync, readFileSync } from "fs";
 import { resolve } from "path";
@@ -89,7 +91,7 @@ describeDb("5/7 persistence + share against Postgres", () => {
       data: {
         title: DEFAULT_TITLE,
         ownerId: alice.id,
-        content: emptyDoc,
+        content: emptyContent,
       },
     });
     await prisma.document.update({
@@ -117,7 +119,7 @@ describeDb("5/7 persistence + share against Postgres", () => {
       data: {
         title: `${prefix}-share`,
         ownerId: alice.id,
-        content: emptyDoc,
+        content: emptyContent,
       },
     });
 
