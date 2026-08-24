@@ -1,6 +1,6 @@
 # Ajaia Docs
 
-Lightweight collaborative documents for the Ajaia LLC AI-Native Full Stack take-home. Not a Google Docs clone: create, edit, import, share, persist.
+Lightweight collaborative documents for the Ajaia LLC AI-Native Full Stack take-home. This is not a Google Docs clone: create, edit, import, share, and persist within a deliberate scope.
 
 ## Demo accounts (reviewers)
 
@@ -10,14 +10,14 @@ Lightweight collaborative documents for the Ajaia LLC AI-Native Full Stack take-
 | `bob@ajaia.dev` | `demo1234` | Shared-with |
 | `carol@ajaia.dev` | `demo1234` | Unrelated (no share) |
 
-A seeded doc **Welcome to Ajaia Docs** is owned by Alice and already shared with Bob.
+A seeded document **Welcome to Ajaia Docs** is owned by Alice and already shared with Bob.
 
 ## Live product
 
 - https://doc-clone-eta.vercel.app
 - Source: https://github.com/Vashu473/DOC-CLONE
 
-If login fails on Vercel, seed Neon once (same `DATABASE_URL` as the Vercel env):
+If login fails on Vercel, seed Neon once (same `DATABASE_URL` as the Vercel environment):
 
 ```bash
 DATABASE_URL="postgresql://..." npx prisma db push
@@ -28,18 +28,18 @@ DATABASE_URL="postgresql://..." npx prisma db seed
 
 - Login with seeded users (httpOnly session cookie)
 - Create, rename, delete (owner), edit rich text
-- Bold, italic, underline, H1/H2, bullets, numbered lists
-- Autosave + Save now; content stored as TipTap JSON
+- Bold, italic, underline, selection-based H1/H2 size, bullets, numbered lists
+- Autosave + Save control; content stored as TipTap JSON
 - Import `.txt` / `.md` (max 1 MB) into a **new** document
 - Share by email with an existing user (editor access); unshare
 - **Owned** vs **Shared with me** lists
 - Refresh keeps documents, formatting, and shares
 
-**Not supported:** `.docx`, realtime collab, comments, version history, PDF export, viewer-only role.
+**Not supported:** `.docx`, realtime collaboration, comments, version history, PDF export, viewer-only role.
 
 ## Local setup
 
-Need **Node 20+** and **Docker** (Postgres on host port **5433** so it does not clash with a local Postgres on 5432). Alternatively point `DATABASE_URL` at a free [Neon](https://neon.tech) project.
+Requires **Node 20+** and **Docker** (Postgres on host port **5433** to avoid clashing with a local Postgres on 5432). Alternatively point `DATABASE_URL` at a free [Neon](https://neon.tech) project.
 
 ```bash
 cp .env.example .env
@@ -51,7 +51,7 @@ npm run dev
 
 Open http://localhost:3000
 
-`.env` keys:
+Environment variables:
 
 - `DATABASE_URL` — Postgres connection string
 - `SESSION_SECRET` — 16+ character secret (use a long random value in production)
@@ -63,30 +63,24 @@ npm test
 npm run test:e2e
 ```
 
-- `npm test` — Vitest (access, import, validation; local DB persistence if Postgres is local)
+- `npm test` — Vitest (access, import, validation; local DB persistence when Postgres is local)
 - `npm run test:e2e` — short Playwright smoke (login, create, 404)
 
-Needs seeded users (`npm run db:seed`) and a running DB. E2E starts `npm run dev` if nothing is on port 3000.
+Needs seeded users (`npm run db:seed`) and a running database. E2E starts `npm run dev` if nothing is listening on port 3000.
 
-To hit production instead:
+Against production:
 
 ```bash
-npx playwright test --config=playwright.config.ts
-# or
+# PowerShell
 $env:PLAYWRIGHT_BASE_URL="https://doc-clone-eta.vercel.app"; npm run test:e2e
 ```
 
 ## Deploy (Vercel + Neon)
 
-1. Create a free Neon database. Copy the connection string.
-2. `npx vercel` (or connect the Git repo in the Vercel dashboard).
-3. Set env vars: `DATABASE_URL`, `SESSION_SECRET` (long random).
-4. Deploy. Then seed production once:
-
-```bash
-DATABASE_URL="your-neon-url" npx prisma db push
-DATABASE_URL="your-neon-url" npx prisma db seed
-```
+1. Create a free Neon database and copy the connection string.
+2. Connect the Git repository in the Vercel dashboard (or use `npx vercel`).
+3. Set environment variables: `DATABASE_URL`, `SESSION_SECRET` (long random).
+4. Deploy. Production builds run `prisma db push` and `prisma db seed` as part of the build command.
 
 Reviewers do not need paid accounts.
 

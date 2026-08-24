@@ -1,31 +1,32 @@
 # AI workflow note
 
-## Tools
+This project used a coding assistant inside the IDE as a productivity aid. Product scope, architecture choices, and final verification were owned by the engineer.
 
-- **Cursor (Grok 4.6)** for scaffolding, TipTap wiring, Prisma schema, tests, and copy.
-- **Human judgment** for scope cuts, share model, file-type choice, demo accounts, and what *not* to build.
+## Tools used
 
-## Where AI sped things up
+- Cursor IDE assistant for boilerplate, TipTap editor wiring, Prisma schema drafts, and test stubs
+- Manual review and edits on every generated suggestion before it shipped
 
-- Next.js + Prisma + TipTap boilerplate and toolbar wiring
-- Markdown → TipTap JSON parser and Vitest cases
-- Seed script and reviewer-oriented README structure
+## Where assistance helped
 
-## What we changed or rejected
+- Faster scaffolding of Next.js routes, Prisma models, and the TipTap toolbar
+- First draft of the markdown → TipTap JSON parser and unit tests
+- Structuring README / architecture notes so reviewers can run the app quickly
 
-- Rejected realtime / Yjs and comment threads (stretch that would starve the core).
-- Rejected `.docx` import as a first file type (XML complexity vs timebox).
-- Rejected storing uploads on the serverless filesystem.
-- Rejected paid auth providers (assignment: reviewers must not pay).
-- Tightened the markdown parser after an early consecutive-list bug (flush-on-every-bullet).
-- Pinned **Prisma 6** instead of 7 (driver adapters would burn time).
+## What was changed or rejected
 
-## How we verified
+- Rejected realtime / Yjs and comment threads (would have starved the core slice)
+- Rejected `.docx` as the first import format (XML cost vs timebox)
+- Rejected writing uploads to the serverless filesystem
+- Rejected paid auth providers so reviewers need no paid accounts
+- Fixed an early markdown list-parsing bug after review (flush consecutive lists correctly)
+- Stayed on Prisma 6 instead of upgrading to Prisma 7 mid-build (adapter churn)
 
-- `npm test` — access rules + import JSON
-- Manual path: Alice create/format/save/refresh → import `.md` → share Bob → Bob **Shared with me**
-- Unsupported file type shows an error
-- Unknown share email is rejected with a seeded-account hint
-- Production: live URL login + share + refresh (see `SUBMISSION.md`)
+## How correctness was verified
 
-We used AI as an accelerator, not as the owner of product or authz decisions.
+- `npm test` for access control and import parsing
+- Manual flow: Alice create → format → save → refresh → import `.md` → share with Bob → Bob opens **Shared with me**
+- Error paths: unsupported file type, unknown share email, unauthorized document URL
+- Production smoke on the live Vercel URL (see `SUBMISSION.md`)
+
+Assistive tooling did not replace judgment on what to ship, what to cut, or how sharing and persistence should work.

@@ -1,123 +1,124 @@
-# Ajaia Docs — internal plan (Hinglish)
+# Ajaia Docs — implementation plan
 
-Yeh file **tumhare liye** hai: kaise parts split kiye, kaunsi decision kyun li. Reviewer Drive packet ke liye alag files hain (`README`, `ARCHITECTURE`, `AI_WORKFLOW`, `SUBMISSION`).
+Internal planning notes: scope cuts, order of work, and demo path. Reviewer materials are in `README.md`, `ARCHITECTURE.md`, `AI_WORKFLOW.md`, and `SUBMISSION.md`.
 
-Google Docs clone nahi banana. 4–6 hour mein **ek strong working slice** ship karna hai.
+Goal: ship a strong working slice within a 4–6 hour timebox — not a full Google Docs clone.
 
 ---
 
-## Assignment kya maang raha hai (checklist)
+## Requirements checklist
 
-| Requirement | Hum kya kar rahe hain |
+| Requirement | Approach |
 |---|---|
-| Create / rename / edit / save / reopen | Docs list + TipTap editor + DB |
-| Bold, italic, underline, headings, lists | TipTap toolbar |
-| File upload (product-relevant) | `.txt` / `.md` import → naya editable doc |
-| Owner + grant access + owned vs shared | Seeded Alice/Bob, share by email |
-| Persist after refresh | Postgres (local Docker ya Neon) + TipTap JSON |
-| README, live URL, errors, 1 test, architecture | P6–P8 |
-| AI note + 3–5 min video + Drive + SUBMISSION | Docs pack; video/Drive tum record/upload |
+| Create / rename / edit / save / reopen | Docs list + TipTap editor + database |
+| Bold, italic, underline, headings, lists | TipTap toolbar (H1/H2 apply to selection size) |
+| File upload (product-relevant) | Import `.txt` / `.md` into a new editable document |
+| Owner + grant access + owned vs shared | Seeded users; share by email |
+| Persist after refresh | Postgres (Docker locally, Neon in production) + TipTap JSON |
+| README, live URL, errors, tests, architecture | Covered in the submission pack |
+| AI workflow note + walkthrough video + Drive | Required assignment deliverables |
 
-Evaluator dekh raha hai: **product judgment**, full stack, editor quality, upload + share, deploy, tradeoffs, AI without outsourcing judgment.
-
----
-
-## Locked decisions (kyun)
-
-1. **Next.js App Router + TypeScript + Tailwind** — ek repo, UI + API, Vercel pe 10 min deploy.
-2. **TipTap** — bold/italic/underline/H1/H2/lists ready; JSON schema lists/headings ke liye HTML string se better.
-3. **Prisma + Postgres** — assignment allow karta hai SQLite/Postgres. Vercel pe SQLite file unreliable hai, isliye Postgres. Local: Docker Compose. Prod: Neon free (reviewer pay nahi karta).
-4. **Seeded login (cookie session)** — Auth0/Clerk skip. Constraint: koi paid service mat maango. Alice + Bob login screen pe dikhe.
-5. **Share = editor access by email** — user DB mein hona chahiye. Viewer role stretch. Unshare owner-only (small, demo-friendly).
-6. **Import only, attachments nahi** — `.txt`/`.md` → naya doc. `.docx` skip (Word XML heavy). Binary attach skip (serverless disk + blob extra time).
-7. **No realtime / comments / versions / PDF.** Stretch agar core complete: Markdown export.
-8. **Autosave ~1s** + Saved / Saving / Unsaved — editor usable lage, Google Docs jaisa feel without collab.
+Evaluation focus: product judgment, full-stack execution, editor quality, upload and sharing, deployability, and clear tradeoffs.
 
 ---
 
-## Parts (isi order mein kaam)
+## Locked decisions
 
-Time khatam ho to **P0–P4 pehle**, phir import/share, test, deploy, docs. Stretch last.
+1. **Next.js App Router + TypeScript + Tailwind** — one repo for UI and mutations; simple Vercel deploy.
+2. **TipTap** — formatting toolbar ready; JSON stores lists and structure more reliably than HTML strings.
+3. **Prisma + Postgres** — SQLite is allowed by the brief but awkward on serverless; Postgres matches production. Local: Docker Compose. Production: Neon free tier.
+4. **Seeded cookie-session login** — no paid Auth0/Clerk. Alice, Bob, and Carol appear on the login screen.
+5. **Share = editor access by email** — target user must exist. Unshare is owner-only.
+6. **Import only** — `.txt` / `.md` become new docs. `.docx` and binary attachments are out of scope.
+7. **No realtime, comments, versions, or PDF export.** Optional stretch if early: Markdown export.
+8. **Autosave (~1s)** plus an explicit Save control, with clear status messaging.
 
-### P0 — Yeh PLAN.md
-Decisions, split, cuts, demo path, next 2–4 hours.
+---
+
+## Work order
+
+If time runs out, finish P0–P4 first, then import/share, tests, deploy, docs.
+
+### P0 — This plan
+Decisions, cuts, demo path, next 2–4 hours.
 
 ### P1 — Scaffold + data (~20 min)
-Next.js, Prisma schema (`User`, `Document`, `DocumentShare`), seed Alice/Bob, `.env.example`.
+Next.js, Prisma schema (`User`, `Document`, `DocumentShare`), seed users, `.env.example`.
 
 ### P2 — Auth (~30 min)
-Login/logout, httpOnly cookie, protected routes, seeded creds UI pe, galat password error.
+Login/logout, httpOnly cookie, protected routes, seeded credentials on the UI, bad-password errors.
 
 ### P3 — List + create/rename (~40 min)
 Home: **Owned** vs **Shared with me**. New document, inline rename.
 
-### P4 — Editor + persist (~70 min) — **core depth**
-TipTap toolbar, JSON save, autosave, refresh ke baad wahi formatting. Yahi “editing quality” hai.
+### P4 — Editor + persist (~70 min) — core depth
+TipTap toolbar, JSON save, autosave, formatting survives refresh.
 
 ### P5 — Import + share (~75 min)
-`.txt`/`.md` import; dusri type / size limit reject + UI copy. Share modal, tabs, authz: Bob unshared doc pe nahi ghus sakta.
+`.txt`/`.md` import; reject other types and oversized files in UI and server. Share modal, list tabs, authorization checks.
 
 ### P6 — Quality (~30 min)
-Empty/error states. Vitest: access helper + markdown → TipTap JSON. Snapshot-only test nahi.
+Empty and error states. Vitest for access rules and markdown → TipTap JSON.
 
 ### P7 — Deploy (~30 min)
-Vercel + `DATABASE_URL` + `SESSION_SECRET`, seed, live smoke: login → share → refresh.
+Vercel + `DATABASE_URL` + `SESSION_SECRET`, seed, smoke: login → share → refresh.
 
 ### P8 — Submission pack (~45 min)
-README, ARCHITECTURE, AI_WORKFLOW, SUBMISSION (working / incomplete / next 2–4h), WALKTHROUGH.txt. Loom + Drive **tum** karoge.
+README, ARCHITECTURE, AI_WORKFLOW, SUBMISSION, WALKTHROUGH.txt. Record and upload the walkthrough separately.
 
 ### P9 — Stretch only if early
-Markdown export **ya** unshare polish. Yjs/realtime nahi.
+Markdown export or unshare polish — not realtime collaboration.
 
 ---
 
-## Explicit cuts (video + ARCHITECTURE mein bolo)
+## Explicit cuts
 
-Realtime collab, comments, suggestions, version history, folders, `.docx`, enterprise ACL, paid auth, mobile-first polish, file attachments as blobs.
+Realtime collaboration, comments, suggestions, version history, folders, `.docx`, enterprise ACL, paid auth, mobile-first polish, blob attachments on disk.
 
 ---
 
-## Reviewer 10-min path (README + video same)
+## Reviewer 10-minute path
 
-1. Live URL kholo  
-2. Alice login → New doc → format → save → refresh  
+1. Open the live URL  
+2. Sign in as Alice → New document → format → save → refresh  
 3. Import sample `.md`  
-4. Share `bob@ajaia.dev`  
-5. Logout → Bob → **Shared with me** → open/edit  
+4. Share with `bob@ajaia.dev`  
+5. Log out → Bob → **Shared with me** → open/edit  
 
 **Demo accounts**
 
 - `alice@ajaia.dev` / `demo1234` (owner)  
-- `bob@ajaia.dev` / `demo1234` (shared-with)
+- `bob@ajaia.dev` / `demo1234` (shared-with)  
+- `carol@ajaia.dev` / `demo1234` (no access)
 
 ---
 
-## Authz rule (ek line)
+## Authorization rule
 
-Read/write tabhi: user **owner** hai **ya** `DocumentShare` row hai. Warna 403.
+Read/write only if the user is the **owner** or has a `DocumentShare` row. Otherwise treat as not found / forbidden.
 
 ---
 
-## Video script (3–5 min) — record ke time
+## Walkthrough script (3–5 min)
 
-1. Problem + scope cut (30s)  
+1. Problem and scope cuts (30s)  
 2. Alice: create, format, save, refresh (60s)  
 3. Import `.md` (30s)  
 4. Share → Bob Shared tab (60s)  
-5. Stack + TipTap JSON + cookie auth (30s)  
-6. Deprioritized + AI usage (30–45s)
+5. Stack choices: TipTap JSON, cookie auth, Postgres (30s)  
+6. Deprioritized features and tooling notes (30–45s)
 
 ---
 
-## Next 2–4 hours (agar time bache / SUBMISSION mein)
+## Next 2–4 hours
 
 `.docx` import (mammoth), viewer vs editor roles, Markdown/PDF export, presence indicator, version snapshots.
 
 ---
 
-## Risks (yaad rakhna)
+## Risks
 
-- TipTap JSON save: pehle create + refresh verify  
+- TipTap JSON save: verify create + refresh early  
 - Vercel cookies: `secure` + `sameSite=lax`  
-- Uploads serverless disk pe mat rakhna (import text ko DB mein daalo)  
-- Stretch se pehle share + deploy lock karo  
+- Do not store uploads on serverless disk (keep imported text in the database)  
+- Lock share + deploy before stretch features  

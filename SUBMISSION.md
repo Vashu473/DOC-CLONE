@@ -2,12 +2,12 @@
 
 ## Included
 
-- Source code (this repo)
-- [`README.md`](README.md) — local setup and run
-- [`ARCHITECTURE.md`](ARCHITECTURE.md) — priorities and cuts
-- [`AI_WORKFLOW.md`](AI_WORKFLOW.md) — how AI was used
-- [`WALKTHROUGH.txt`](WALKTHROUGH.txt) — video URL (paste Loom/YouTube here)
-- [`PLAN.md`](PLAN.md) — internal Hinglish split (not required by reviewers)
+- Source code (this repository)
+- [`README.md`](README.md) — local setup and run instructions
+- [`ARCHITECTURE.md`](ARCHITECTURE.md) — priorities and deliberate cuts
+- [`AI_WORKFLOW.md`](AI_WORKFLOW.md) — how assistive tooling was used and verified
+- [`WALKTHROUGH.txt`](WALKTHROUGH.txt) — walkthrough video URL
+- [`PLAN.md`](PLAN.md) — implementation plan (optional for reviewers)
 - [`public/sample-import.md`](public/sample-import.md) — sample import file
 - Automated tests: `npm test`
 
@@ -23,7 +23,7 @@
 - `bob@ajaia.dev` / `demo1234` — shared-with
 - `carol@ajaia.dev` / `demo1234` — unrelated (should not see Alice’s unshared docs)
 
-Seeded document: **Welcome to Ajaia Docs** (Alice owns, already shared with Bob).
+Seeded document: **Welcome to Ajaia Docs** (owned by Alice, already shared with Bob).
 
 ## How to run locally
 
@@ -31,24 +31,24 @@ See [`README.md`](README.md): Docker Postgres on port 5433, `npm run db:setup`, 
 
 ## What is working
 
-- Auth, document CRUD, TipTap editing, autosave, persist after refresh
+- Auth, document CRUD, TipTap editing, autosave, persistence after refresh
 - Import `.txt` / `.md` (max 1 MB)
 - Share / unshare, Owned vs Shared with me, server-side access checks
 - Validation errors (bad login, unknown share email, bad file type)
-- Tests for access + markdown import
+- Automated tests for access and markdown import
 
 ## What is incomplete
 
 - Walkthrough video URL must be pasted into `WALKTHROUGH.txt` and the assignment portal
-- Google Drive folder is a manual upload
-- Live app URL is ready: https://doc-clone-eta.vercel.app
+- Google Drive folder upload is manual
+- Live app URL: https://doc-clone-eta.vercel.app
 
 ## What I would build next (2–4 hours)
 
 - `.docx` import (mammoth)
 - Viewer vs editor roles
 - Markdown export
-- A couple of named versions / restore
+- Named versions / restore
 
 ## Intentionally not built
 
