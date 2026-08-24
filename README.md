@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ajaia Docs
 
-## Getting Started
+Lightweight collaborative documents for the Ajaia LLC AI-Native Full Stack take-home. Not a Google Docs clone: create, edit, import, share, persist.
 
-First, run the development server:
+## Demo accounts (reviewers)
+
+| Email | Password | Role |
+|---|---|---|
+| `alice@ajaia.dev` | `demo1234` | Owner |
+| `bob@ajaia.dev` | `demo1234` | Shared-with |
+
+A seeded doc **Welcome to Ajaia Docs** is owned by Alice and already shared with Bob.
+
+## Live product
+
+See [`SUBMISSION.md`](SUBMISSION.md).
+
+Production path: **Vercel + Neon** (free). This workspace was not logged into Vercel, so you still need:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npx vercel login
+npx vercel
+# In the dashboard: set DATABASE_URL (Neon) and SESSION_SECRET
+npx vercel --prod
+DATABASE_URL="postgresql://..." npx prisma db push
+DATABASE_URL="postgresql://..." npx prisma db seed
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then paste the `*.vercel.app` URL into `SUBMISSION.md` and the assignment portal.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## What works
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Login with seeded users (httpOnly session cookie)
+- Create, rename, delete (owner), edit rich text
+- Bold, italic, underline, H1/H2, bullets, numbered lists
+- Autosave + Save now; content stored as TipTap JSON
+- Import `.txt` / `.md` (max 1 MB) into a **new** document
+- Share by email with an existing user (editor access); unshare
+- **Owned** vs **Shared with me** lists
+- Refresh keeps documents, formatting, and shares
 
-## Learn More
+**Not supported:** `.docx`, realtime collab, comments, version history, PDF export, viewer-only role.
 
-To learn more about Next.js, take a look at the following resources:
+## Local setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Need **Node 20+** and **Docker** (Postgres on host port **5433** so it does not clash with a local Postgres on 5432). Alternatively point `DATABASE_URL` at a free [Neon](https://neon.tech) project.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+cp .env.example .env
+docker compose up -d
+npm install
+npm run db:setup
+npm run dev
+```
 
-## Deploy on Vercel
+Open http://localhost:3000
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`.env` keys:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `DATABASE_URL` — Postgres connection string
+- `SESSION_SECRET` — 16+ character secret (use a long random value in production)
+
+## Tests
+
+```bash
+npm test
+```
+
+Covers share access rules and markdown → TipTap import.
+
+## Deploy (Vercel + Neon)
+
+1. Create a free Neon database. Copy the connection string.
+2. `npx vercel` (or connect the Git repo in the Vercel dashboard).
+3. Set env vars: `DATABASE_URL`, `SESSION_SECRET` (long random).
+4. Deploy. Then seed production once:
+
+```bash
+DATABASE_URL="your-neon-url" npx prisma db push
+DATABASE_URL="your-neon-url" npx prisma db seed
+```
+
+Reviewers do not need paid accounts.
+
+## Sample import file
+
+[`public/sample-import.md`](public/sample-import.md)
